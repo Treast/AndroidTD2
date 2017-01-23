@@ -1,12 +1,16 @@
 package vincent.riva.channelmessaging;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -42,7 +46,7 @@ public class ChannelActivity extends AppCompatActivity {
         final Runnable r = new Runnable() {
             public void run() {
                 refreshMessages();
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 5000);
             }
         };
         r.run();
