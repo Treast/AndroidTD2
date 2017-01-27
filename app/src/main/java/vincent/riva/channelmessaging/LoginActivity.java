@@ -1,5 +1,6 @@
 package vincent.riva.channelmessaging;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -12,7 +13,7 @@ import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

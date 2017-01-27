@@ -7,7 +7,26 @@ public class ResponseMessage {
     private int userID;
     private String message;
     private String data;
-    private String imageURL;
+    private String imageUrl;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public ResponseMessage(int userID, String message, String data, String imageUrl, String username) {
+
+        this.userID = userID;
+        this.message = message;
+        this.data = data;
+        this.imageUrl = imageUrl;
+        this.username = username;
+    }
+
+    private String username;
 
     public int getUserID() {
         return userID;
@@ -33,19 +52,19 @@ public class ResponseMessage {
         this.data = data;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public ResponseMessage(int userID, String message, String data, String imageURL) {
+    public ResponseMessage(int userID, String message, String data, String imageUrl) {
 
         this.userID = userID;
         this.message = message;
         this.data = data;
-        this.imageURL = imageURL;
+        this.imageUrl = imageUrl;
     }
 }

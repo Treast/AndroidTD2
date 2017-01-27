@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,24 +19,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URLConnection;
 import java.util.List;
 
 public class MessageArrayAdapter extends ArrayAdapter<ResponseMessage> {
 
     private final Context context;
-    private ResponseUserList users;
 
-    public MessageArrayAdapter(Context context, List<ResponseMessage> objects, ResponseUserList users) {
+    public MessageArrayAdapter(Context context, List<ResponseMessage> objects) {
         super(context, R.layout.message_layout, objects);
         this.context = context;
-        this.users = users;
     }
 
     @Override
@@ -49,44 +46,59 @@ public class MessageArrayAdapter extends ArrayAdapter<ResponseMessage> {
         TextView textViewMessage = (TextView)rowView.findViewById(R.id.textViewMessage);
         final ImageView imageViewAvatar = (ImageView)rowView.findViewById(R.id.imageViewAvatar);
 
-        ResponseUser u = this.users.get(message.getUserID());
+        //ResponseUser u = this.users.get(message.getUserID());
 
-        AsyncGetClass asyncGet = new AsyncGetClass();
+        if(message.getImageUrl() != null)
+        {
+            AsyncGetClass async = new AsyncGetClass(getContext());
 
-        asyncGet.setOnCompleteDownloadListener(new OnDownloadListener() {
-            @Override
-            public void onCompleteDownload(Bitmap b) {
-                ImageView imageViewAvatar = (ImageView)rowView.findViewById(R.id.imageViewAvatar);
-                imageViewAvatar.setImageBitmap(getRoundedCornerBitmap(b));
-            }
-        });
+            async.setOnCompleteDownloadListener(new OnDownloadListener() {
+                @Override
+                public void onCompleteDownload(String r) {
+                    File f = new File(getContext().getFilesDir(), r);
+                    Bitmap image = BitmapFactory.decodeFile(f.getAbsolutePath());
+                    Bitmap avatar = getRoundedCornerBitmap(MessageArrayAdapter.getRoundedCornerBitmap(image));
+                    imageViewAvatar.setImageBitmap(avatar);
+                }
+            });
 
-        asyncGet.execute(u.getImageUrl());
-
-        textViewUser.setText(u.getIdentifiant());
+            async.execute(message.getUsername()+".bmp", message.getImageUrl());
+        }
+        textViewUser.setText(message.getUsername());
         textViewDate.setText(message.getData());
         textViewMessage.setText(message.getMessage());
         return rowView;
     }
+
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap output;
+
+        if (bitmap.getWidth() > bitmap.getHeight()) {
+            output = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        } else {
+            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getWidth(), Bitmap.Config.ARGB_8888);
+        }
+
         Canvas canvas = new Canvas(output);
 
         final int color = 0xff424242;
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 12;
+
+        float r = 0;
+
+        if (bitmap.getWidth() > bitmap.getHeight()) {
+            r = bitmap.getHeight() / 2;
+        } else {
+            r = bitmap.getWidth() / 2;
+        }
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
+        canvas.drawCircle(r, r, r, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
-
         return output;
     }
 }

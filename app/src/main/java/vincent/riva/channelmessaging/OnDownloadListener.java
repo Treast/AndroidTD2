@@ -6,5 +6,5 @@ import android.graphics.Bitmap;
  * Created by rivav on 23/01/2017.
  */
 public interface OnDownloadListener {
-    public void onCompleteDownload(Bitmap b);
+    public void onCompleteDownload(String r);
 }
