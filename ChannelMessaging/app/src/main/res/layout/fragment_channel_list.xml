@@ -1,0 +1,24 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="vincent.riva.channelmessaging.Fragments.ChannelListFragment">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amis"
+        android:id="@+id/buttonAmis"
+        android:layout_gravity="top"
+        android:layout_marginBottom="20px" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listViewChannels"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom"
+        android:layout_below="@+id/buttonAmis" />
+
+
+</FrameLayout>

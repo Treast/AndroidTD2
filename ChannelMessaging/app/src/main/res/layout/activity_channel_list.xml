@@ -9,21 +9,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="vincent.riva.channelmessaging.ChannelListActivity">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewChannels"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/buttonAmis" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amis"
-        android:id="@+id/buttonAmis"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="20px" />
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <fragment
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:name="vincent.riva.channelmessaging.Fragments.ChannelListFragment"
+            android:id="@+id/fragmentChannelList"
+            tools:layout="@layout/fragment_channel_list" />
+    </LinearLayout>
 </RelativeLayout>

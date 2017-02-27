@@ -99,7 +99,7 @@ public class AsyncTaskClass extends AsyncTask<String, Integer, String> {
             listener.onCompleteRequest(response);
     }
 
-    protected void setOnCompleteRequestListener(OnCompleteRequestListener listener)
+    public void setOnCompleteRequestListener(OnCompleteRequestListener listener)
     {
         this.onCompleteListeners.add(listener);
     }
