@@ -56,7 +56,7 @@ public class FriendMessageArrayAdapter extends ArrayAdapter<ResponseMessage> {
             async.execute(message.getUsername()+".bmp", message.getImageUrl());
         }
         textViewUser.setText(message.getUsername());
-        textViewDate.setText(message.getData());
+        textViewDate.setText(message.getDate());
         textViewMessage.setText(message.getMessage());
         return rowView;
     }

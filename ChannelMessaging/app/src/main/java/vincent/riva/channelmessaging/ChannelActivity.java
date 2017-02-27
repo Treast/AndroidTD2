@@ -8,22 +8,18 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Picture;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -32,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 
 public class ChannelActivity extends Activity {
@@ -59,8 +54,11 @@ public class ChannelActivity extends Activity {
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache.bmp");
+                Uri u = Uri.fromFile(f);
+
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, new File(Environment.getDataDirectory(), "cache.bmp"));
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
                 startActivityForResult(intent, PICTURE_REQUEST_CODE);
             }
         });
@@ -92,28 +90,22 @@ public class ChannelActivity extends Activity {
         {
             if(resultCode == RESULT_OK)
             {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                File file = new File(Environment.getDataDirectory(), "cache.bmp");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache.bmp");
 
                try {
-                   OutputStream fOut = new FileOutputStream(file);
-                   imageBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                   fOut.flush();
-                   fOut.close();
                    resizeFile(file, getApplicationContext());
                 } catch(Exception e)
                 {
                     Log.d("Error", "ERRROOOOOOOOOOOOR");
                 }
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
+                Log.d("Test", "Test");
                 this.channelID = getIntent().getIntExtra("channelID", 1);
 
                 HashMap<String, String> hash = new HashMap<>();
                 hash.put("accesstoken", this.accesstoken);
                 hash.put("channelid", this.channelID+"");
-                UploadFileToServer upload = new UploadFileToServer(getApplicationContext(), file.getAbsolutePath(), hash, new UploadFileToServer.OnUploadFileListener() {
+                UploadFileToServer upload = new UploadFileToServer(this, file.getAbsolutePath(), hash, new UploadFileToServer.OnUploadFileListener() {
                     @Override
                     public void onResponse(String result) {
                         Log.d("Result", result);
@@ -121,9 +113,10 @@ public class ChannelActivity extends Activity {
 
                     @Override
                     public void onFailed(IOException error) {
-
+                            Log.d("Error", error.getMessage());
                     }
                 });
+                upload.execute();
             }
         }
     }
@@ -178,10 +171,6 @@ public class ChannelActivity extends Activity {
                 break;
         }
         return rotate;
-    }
-
-    public void getUsers()
-    {
     }
 
     private void refreshMessages()

@@ -6,8 +6,27 @@ package vincent.riva.channelmessaging;
 public class ResponseMessage {
     private int userID;
     private String message;
-    private String data;
+    private String date;
     private String imageUrl;
+    private String messageImageUrl;
+
+    public String getMessageImageUrl() {
+        return messageImageUrl;
+    }
+
+    public void setMessageImageUrl(String messageImageUrl) {
+        this.messageImageUrl = messageImageUrl;
+    }
+
+    public ResponseMessage(int userID, String message, String date, String imageUrl, String messageImageUrl, String username) {
+
+        this.userID = userID;
+        this.message = message;
+        this.date = date;
+        this.imageUrl = imageUrl;
+        this.messageImageUrl = messageImageUrl;
+        this.username = username;
+    }
 
     public String getUsername() {
         return username;
@@ -17,11 +36,11 @@ public class ResponseMessage {
         this.username = username;
     }
 
-    public ResponseMessage(int userID, String message, String data, String imageUrl, String username) {
+    public ResponseMessage(int userID, String message, String date, String imageUrl, String username) {
 
         this.userID = userID;
         this.message = message;
-        this.data = data;
+        this.date = date;
         this.imageUrl = imageUrl;
         this.username = username;
     }
@@ -44,12 +63,12 @@ public class ResponseMessage {
         this.message = message;
     }
 
-    public String getData() {
-        return data;
+    public String getDate() {
+        return date;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getImageUrl() {
@@ -64,7 +83,7 @@ public class ResponseMessage {
 
         this.userID = userID;
         this.message = message;
-        this.data = data;
+        this.date = data;
         this.imageUrl = imageUrl;
     }
 }
