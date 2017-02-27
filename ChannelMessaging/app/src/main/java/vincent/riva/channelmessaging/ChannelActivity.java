@@ -72,15 +72,6 @@ public class ChannelActivity extends Activity {
                 async2.execute("http://www.raphaelbischof.fr/messaging/?function=sendmessage", "accesstoken", accesstoken, "channelid", channelID+"", "message", message);
             }
         });
-        final Handler handler = new Handler();
-
-        final Runnable r = new Runnable() {
-            public void run() {
-                refreshMessages();
-                handler.postDelayed(this, 5000);
-            }
-        };
-        r.run();
     }
 
     @Override
@@ -173,42 +164,4 @@ public class ChannelActivity extends Activity {
         return rotate;
     }
 
-    private void refreshMessages()
-    {
-        final AsyncTaskClass async = new AsyncTaskClass();
-
-        async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
-            @Override
-            public void onCompleteRequest(String response) {
-                final ListView listViewMessages = (ListView)findViewById(R.id.listViewMessages);
-                Gson gson = new Gson();
-                ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
-                listViewMessages.setAdapter(new MessageArrayAdapter(getApplicationContext(), messageList.getMessages()));
-                listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        final ResponseMessage message = (ResponseMessage)listViewMessages.getItemAtPosition(position);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Voulez vous vraiment ajotuer cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
-                        builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                UserDataSource userDataSource = new UserDataSource(getApplicationContext());
-                                userDataSource.open();
-                                userDataSource.createFriend(message.getUsername(), message.getImageUrl());
-                                userDataSource.close();
-                            }
-                        });
-                        builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                });
-            }
-        });
-        async.execute("http://www.raphaelbischof.fr/messaging/?function=getmessages", "accesstoken", accesstoken, "channelid", channelID+"");
-    }
 }

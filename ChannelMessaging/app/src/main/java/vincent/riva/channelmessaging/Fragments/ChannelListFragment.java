@@ -40,6 +40,11 @@ public class ChannelListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_channel_list, container, false);
+
+
+        SharedPreferences settings = getActivity().getSharedPreferences("MyPrefs", 0);
+        this.token = settings.getString("accesstoken", "");
+
         this.listViewChannels = (ListView)v.findViewById(R.id.listViewChannels);
         this.buttonAmis = (Button)v.findViewById(R.id.buttonAmis);
         this.buttonAmis.setOnClickListener((ChannelListActivity)getActivity());
@@ -54,16 +59,10 @@ public class ChannelListFragment extends Fragment {
         async.execute("http://www.raphaelbischof.fr/messaging/?function=getchannels", "accesstoken", this.token);
     }
 
-    public void setChannels(Context context, List<ResponseChannel> channels)
+    public void setChannels(List<ResponseChannel> channels)
     {
         this.channels = channels;
-        this.listViewChannels.setAdapter(new ChannelArrayAdapter(context, this.channels));
+        this.listViewChannels.setAdapter(new ChannelArrayAdapter(getActivity().getApplicationContext(), this.channels));
         this.listViewChannels.setOnItemClickListener((ChannelListActivity)getActivity());
-    }
-
-    public void setToken(String token)
-    {
-        Log.d("Toek", token);
-        this.token = token;
     }
 }

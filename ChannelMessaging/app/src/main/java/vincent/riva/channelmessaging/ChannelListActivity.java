@@ -35,12 +35,6 @@ public class ChannelListActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_list);
 
-        SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
-        this.token = settings.getString("accesstoken", "");
-
-        ChannelListFragment fragment = (ChannelListFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentChannelList);
-        fragment.setToken(this.token);
-        fragment.findMessages();
     }
 
     @Override
@@ -59,7 +53,7 @@ public class ChannelListActivity extends AppCompatActivity implements View.OnCli
         Gson gson = new Gson();
         channelList = gson.fromJson(response, ResponseChannelList.class);
         ChannelListFragment fragment = (ChannelListFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentChannelList);
-        fragment.setChannels(getApplicationContext(), channelList.getChannels());
+        fragment.setChannels(channelList.getChannels());
     }
 
     @Override
@@ -67,6 +61,7 @@ public class ChannelListActivity extends AppCompatActivity implements View.OnCli
     {
         ResponseChannel channel = channelList.getChannels().get(position);
         this.channelID = channel.getChannelID();
+        Log.d("Eze", channel.getName());
         MessageFragment fragment = (MessageFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentMessage);
 
         if(fragment == null|| !fragment.isInLayout()){
@@ -74,46 +69,9 @@ public class ChannelListActivity extends AppCompatActivity implements View.OnCli
             i.putExtra("channelID", channel.getChannelID());
             startActivity(i);
         } else {
-            fragment.setUp(this.token, channel.getChannelID());
+            fragment.setChannelID(channel.getChannelID());
         }
     }
 
-    public void refreshMessages()
-    {
-        final AsyncTaskClass async = new AsyncTaskClass();
 
-        async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
-            @Override
-            public void onCompleteRequest(String response) {
-                final ListView listViewMessages = (ListView)findViewById(R.id.listViewMessages);
-                Gson gson = new Gson();
-                ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
-                listViewMessages.setAdapter(new MessageArrayAdapter(getApplicationContext(), messageList.getMessages()));
-                listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        final ResponseMessage message = (ResponseMessage)listViewMessages.getItemAtPosition(position);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                        builder.setMessage("Voulez vous vraiment ajotuer cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
-                        builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                UserDataSource userDataSource = new UserDataSource(getApplicationContext());
-                                userDataSource.open();
-                                userDataSource.createFriend(message.getUsername(), message.getImageUrl());
-                                userDataSource.close();
-                            }
-                        });
-                        builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                });
-            }
-        });
-        async.execute("http://www.raphaelbischof.fr/messaging/?function=getmessages", "accesstoken", token, "channelid", channelID+"");
-    }
 }
