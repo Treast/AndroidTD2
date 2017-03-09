@@ -36,7 +36,7 @@ public class ChannelActivity extends Activity {
     private int channelID;
     private Context context;
     private final int PICTURE_REQUEST_CODE = 1001;
-
+    private ListView listViewMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +50,7 @@ public class ChannelActivity extends Activity {
         final EditText editTextMessage = (EditText)findViewById(R.id.editTextMessage);
         Button buttonEnvoyer = (Button)findViewById(R.id.buttonEnvoyer);
         Button buttonPhoto = (Button)findViewById(R.id.buttonPhoto);
+        this.listViewMessages = (ListView)findViewById(R.id.listViewMessages);
 
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +73,7 @@ public class ChannelActivity extends Activity {
                 async2.execute("http://www.raphaelbischof.fr/messaging/?function=sendmessage", "accesstoken", accesstoken, "channelid", channelID+"", "message", message);
             }
         });
+        this.refreshMessages();
     }
 
     @Override
@@ -162,6 +164,45 @@ public class ChannelActivity extends Activity {
                 break;
         }
         return rotate;
+    }
+
+    public void refreshMessages()
+    {
+        final AsyncTaskClass async = new AsyncTaskClass();
+
+        async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
+            @Override
+            public void onCompleteRequest(String response) {
+                Gson gson = new Gson();
+                ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
+                Log.d("Response", response);
+                listViewMessages.setAdapter(new MessageArrayAdapter(getApplicationContext(), messageList.getMessages()));
+                listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        final ResponseMessage message = (ResponseMessage)listViewMessages.getItemAtPosition(position);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                        builder.setMessage("Voulez vous vraiment ajouter cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
+                        builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                UserDataSource userDataSource = new UserDataSource(getApplicationContext());
+                                userDataSource.open();
+                                userDataSource.createFriend(message.getUsername(), message.getImageUrl());
+                                userDataSource.close();
+                            }
+                        });
+                        builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+            }
+        });
+        async.execute("http://www.raphaelbischof.fr/messaging/?function=getmessages", "accesstoken", this.accesstoken, "channelid", channelID+"");
     }
 
 }

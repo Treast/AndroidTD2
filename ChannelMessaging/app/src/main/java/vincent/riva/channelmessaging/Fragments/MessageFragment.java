@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class MessageFragment extends Fragment {
         this.editTextMessage = (EditText)v.findViewById(R.id.editTextMessage);
         this.buttonEnvoyer = (Button)v.findViewById(R.id.buttonEnvoyer);
         this.buttonPhoto = (Button)v.findViewById(R.id.buttonPhoto);
+        this.channelID = getActivity().getIntent().getIntExtra("channelID", 1);
 
         SharedPreferences settings = getActivity().getSharedPreferences("MyPrefs", 0);
         this.token = settings.getString("accesstoken", "");
@@ -83,13 +85,14 @@ public class MessageFragment extends Fragment {
             public void onCompleteRequest(String response) {
                 Gson gson = new Gson();
                 ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
+                Log.d("Response", response);
                 listViewMessages.setAdapter(new MessageArrayAdapter(getActivity().getApplicationContext(), messageList.getMessages()));
                 listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         final ResponseMessage message = (ResponseMessage)listViewMessages.getItemAtPosition(position);
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
-                        builder.setMessage("Voulez vous vraiment ajotuer cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
+                        builder.setMessage("Voulez vous vraiment ajouter cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
                         builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());

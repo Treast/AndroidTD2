@@ -48,7 +48,7 @@ public class ChannelListFragment extends Fragment {
         this.listViewChannels = (ListView)v.findViewById(R.id.listViewChannels);
         this.buttonAmis = (Button)v.findViewById(R.id.buttonAmis);
         this.buttonAmis.setOnClickListener((ChannelListActivity)getActivity());
-
+        this.findMessages();
         return v;
     }
 
