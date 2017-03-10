@@ -2,10 +2,10 @@ package vincent.riva.channelmessaging;
 
 public class ResponseAccessToken {
     private String response;
-    private String code;
+    private int code;
     private String accesstoken;
 
-    public ResponseAccessToken(String response, String code, String accesstoken) {
+    public ResponseAccessToken(String response, int code, String accesstoken) {
         this.response = response;
         this.code = code;
         this.accesstoken = accesstoken;
@@ -19,11 +19,11 @@ public class ResponseAccessToken {
         this.response = response;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

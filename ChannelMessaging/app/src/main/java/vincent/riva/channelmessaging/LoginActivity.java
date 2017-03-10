@@ -1,5 +1,6 @@
 package vincent.riva.channelmessaging;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import com.google.gson.Gson;
 import com.wang.avi.Indicator;
 
 import org.w3c.dom.Text;
+
+import java.util.Random;
 
 public class LoginActivity extends Activity {
 
@@ -50,6 +53,30 @@ public class LoginActivity extends Activity {
         mHandlerTada.postDelayed(new Runnable(){
             public void run(){
                 YoYo.with(Techniques.Tada).delay(500).playOn(imageViewLogo);
+
+
+                YoYo.with(Techniques.SlideOutRight).duration(750).withListener(new Animator.AnimatorListener() {
+
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        textViewWinter.setText(explainStringArray[new Random().nextInt(explainStringArray.length)]);
+                        YoYo.with(Techniques.SlideInLeft).duration(750).playOn(textViewWinter);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                }).playOn(textViewWinter);
                 mHandlerTada.postDelayed(this, mShortDelay);
             }
         }, mShortDelay);
@@ -73,8 +100,14 @@ public class LoginActivity extends Activity {
 
                         loader.setVisibility(View.INVISIBLE);
                         buttonValider.setVisibility(View.VISIBLE);
-                        if(token.getCode() != 200+"")
+                        if(token.getCode() == 200)
                         {
+                            SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString("accesstoken", token.getAccesstoken());
+                            editor.commit();
+                            startActivity(myIntent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, imageViewLogo, "logo").toBundle());
+                        } else {
                             Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "Connexion échouée", Snackbar.LENGTH_LONG);
                             snackbar.setAction("Réessayer", new View.OnClickListener() {
                                 @Override
@@ -84,12 +117,6 @@ public class LoginActivity extends Activity {
                                 }
                             });
                             snackbar.show();
-                        } else {
-                            SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putString("accesstoken", token.getAccesstoken());
-                            editor.commit();
-                            startActivity(myIntent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, imageViewLogo, "logo").toBundle());
                         }
 
                     }
