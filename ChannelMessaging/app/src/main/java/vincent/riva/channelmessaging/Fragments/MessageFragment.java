@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import vincent.riva.channelmessaging.AsyncTaskClass;
 import vincent.riva.channelmessaging.ChannelActivity;
 import vincent.riva.channelmessaging.ChannelListActivity;
+import vincent.riva.channelmessaging.MapActivity;
 import vincent.riva.channelmessaging.MessageArrayAdapter;
 import vincent.riva.channelmessaging.OnCompleteRequestListener;
 import vincent.riva.channelmessaging.R;
@@ -90,22 +91,26 @@ public class MessageFragment extends Fragment {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             final ResponseMessage message = (ResponseMessage) listViewMessages.getItemAtPosition(position);
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
-                            builder.setMessage("Voulez vous vraiment ajouter cet utilisateur à votre liste d'ami ?").setTitle("Ajouter un ami");
-                            builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());
-                                    userDataSource.open();
-                                    userDataSource.createFriend(message.getUsername(), message.getImageUrl());
-                                    userDataSource.close();
-                                }
-                            });
-                            builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
+                            AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                                    .setIcon(android.R.drawable.ic_dialog_alert)//drawable de l'icone à gauche du titre
+                                    .setTitle("Que voulez-vous faire .")//Titre de l'alert dialog
+                                    .setItems(new String[]{"Ajouter en ami", "Voir sur la carte"}, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (which == 0) {
+                                                UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());
+                                                userDataSource.open();
+                                                userDataSource.createFriend(message.getUsername(), message.getImageUrl());
+                                                userDataSource.close();
+                                            } else {
+                                                Intent intent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
+                                                intent.putExtra("lat", message.getLatitude());
+                                                intent.putExtra("lon", message.getLongitude());
+                                                intent.putExtra("user", message.getUsername());
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    }).create();
                             dialog.show();
                         }
                     });
