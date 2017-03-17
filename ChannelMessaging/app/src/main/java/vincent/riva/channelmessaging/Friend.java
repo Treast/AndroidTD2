@@ -33,4 +33,13 @@ public class Friend {
     private UUID userID;
     private String username;
     private String imageUrl;
+    private int uid;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 }

@@ -10,12 +10,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class FriendsDB extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "FriendsDB22.db";
+    private static final String DATABASE_NAME = "FriendsDB.db";
     public static final String FRIEND_TABLE_NAME = "Friend";
     public static final String KEY_ID = "userID";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_IMAGEURL = "imageUrl";
-    private static final String FRIEND_TABLE_CREATE = "CREATE TABLE "+FRIEND_TABLE_NAME+" ("+KEY_ID+" TEXT, "+KEY_USERNAME+" TEXT, "+KEY_IMAGEURL+" TEXT);";
+    public static final String KEY_UID = "uid";
+    private static final String FRIEND_TABLE_CREATE = "CREATE TABLE "+FRIEND_TABLE_NAME+" ("+KEY_ID+" TEXT, "+KEY_USERNAME+" TEXT, "+KEY_IMAGEURL+" TEXT, "+KEY_UID+" TEXT);";
 
     public FriendsDB(Context context)
     {

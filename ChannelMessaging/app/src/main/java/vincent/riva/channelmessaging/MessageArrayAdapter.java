@@ -57,7 +57,7 @@ public class MessageArrayAdapter extends ArrayAdapter<ResponseMessage> {
             async.execute(message.getUsername()+".bmp", message.getImageUrl());
         }
 
-        if(message.getMessageImageUrl() != "")
+        if(message.getMessageImageUrl() != "" && message.getMessageImageUrl() != null)
         {
             AsyncGetClass async = new AsyncGetClass(getContext());
 

@@ -30,7 +30,7 @@ public class FriendsActivity extends Activity {
                 Friend friend = friends.get(position);
 
                 Intent myIntent = new Intent(getApplicationContext(), FriendMessageActivity.class);
-                myIntent.putExtra("userid", friend.getUserID());
+                myIntent.putExtra("userid", friend.getUid());
                 startActivity(myIntent);
             }
         });

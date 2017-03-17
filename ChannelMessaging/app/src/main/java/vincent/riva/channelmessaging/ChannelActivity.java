@@ -220,7 +220,7 @@ public class ChannelActivity extends GPSActivity {
                                         if (which == 0) {
                                             UserDataSource userDataSource = new UserDataSource(getApplicationContext());
                                             userDataSource.open();
-                                            userDataSource.createFriend(message.getUsername(), message.getImageUrl());
+                                            userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
                                             userDataSource.close();
                                         } else {
                                             Intent intent = new Intent(getApplicationContext(), MapActivity.class);

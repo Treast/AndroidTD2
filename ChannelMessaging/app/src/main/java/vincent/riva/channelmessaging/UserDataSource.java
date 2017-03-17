@@ -16,7 +16,7 @@ import java.util.UUID;
 public class UserDataSource {
     private SQLiteDatabase database;
     private FriendsDB dbHelper;
-    private String[] allColumns = {FriendsDB.KEY_ID, FriendsDB.KEY_USERNAME, FriendsDB.KEY_IMAGEURL};
+    private String[] allColumns = {FriendsDB.KEY_ID, FriendsDB.KEY_USERNAME, FriendsDB.KEY_IMAGEURL, FriendsDB.KEY_UID};
 
     public UserDataSource(Context context)
     {
@@ -31,11 +31,12 @@ public class UserDataSource {
         dbHelper.close();
     }
 
-    public Friend createFriend(String username, String imageUrl)
+    public Friend createFriend(String username, String imageUrl, int uid)
     {
         ContentValues values = new ContentValues();
         values.put(FriendsDB.KEY_USERNAME, username);
         values.put(FriendsDB.KEY_IMAGEURL, imageUrl);
+        values.put(FriendsDB.KEY_UID, uid);
         UUID newID = UUID.randomUUID();
         values.put(FriendsDB.KEY_ID, newID.toString());
 
@@ -55,6 +56,7 @@ public class UserDataSource {
         friend.setUserID(UUID.fromString(result));
         friend.setUsername(cursor.getString(1));
         friend.setImageUrl(cursor.getString(2));
+        friend.setUid(cursor.getInt(3));
         return friend;
     }
 

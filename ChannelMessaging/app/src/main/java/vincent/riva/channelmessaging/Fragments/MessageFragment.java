@@ -100,7 +100,7 @@ public class MessageFragment extends Fragment {
                                             if (which == 0) {
                                                 UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());
                                                 userDataSource.open();
-                                                userDataSource.createFriend(message.getUsername(), message.getImageUrl());
+                                                userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
                                                 userDataSource.close();
                                             } else {
                                                 Intent intent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
