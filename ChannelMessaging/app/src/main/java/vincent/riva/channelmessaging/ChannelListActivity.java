@@ -2,8 +2,12 @@ package vincent.riva.channelmessaging;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,46 +21,55 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-public class ChannelListActivity extends Activity {
+import vincent.riva.channelmessaging.Fragments.ChannelListFragment;
+import vincent.riva.channelmessaging.Fragments.MessageFragment;
+
+public class ChannelListActivity extends GPSActivity implements View.OnClickListener, OnCompleteRequestListener, AdapterView.OnItemClickListener{
 
     private ResponseChannelList channelList;
+    private String token;
+    private int channelID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_list);
-        final ListView listViewChannels = (ListView)findViewById(R.id.listViewChannels);
+    }
 
-        Button buttonAmis = (Button)findViewById(R.id.buttonAmis);
-        buttonAmis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.buttonAmis:
                 Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
                 startActivity(intent);
-            }
-        });
-
-        SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
-        String token = settings.getString("accesstoken", "");
-
-        AsyncTaskClass async = new AsyncTaskClass();
-        async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
-            @Override
-            public void onCompleteRequest(String response) {
-                Gson gson = new Gson();
-                channelList = gson.fromJson(response, ResponseChannelList.class);
-                listViewChannels.setAdapter(new ChannelArrayAdapter(getApplicationContext(), channelList.getChannels()));
-                listViewChannels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        ResponseChannel channel = channelList.getChannels().get(position);
-                        Intent myIntent2 = new Intent(getApplicationContext(), ChannelActivity.class);
-                        myIntent2.putExtra("channelID", channel.getChannelID());
-                        startActivity(myIntent2);
-                    }
-                });
-            }
-        });
-        async.execute("http://www.raphaelbischof.fr/messaging/?function=getchannels", "accesstoken", token);
+                break;
+        }
     }
+
+    @Override
+    public void onCompleteRequest(String response) {
+        Gson gson = new Gson();
+        channelList = gson.fromJson(response, ResponseChannelList.class);
+        ChannelListFragment fragment = (ChannelListFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentChannelList);
+        fragment.setChannels(channelList.getChannels());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+    {
+        ResponseChannel channel = channelList.getChannels().get(position);
+        this.channelID = channel.getChannelID();
+        MessageFragment fragment = (MessageFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentMessage);
+
+        if(fragment == null|| !fragment.isInLayout()){
+            Intent i = new Intent(getApplicationContext(), ChannelActivity.class);
+            i.putExtra("channelID", channel.getChannelID());
+            startActivity(i);
+        } else {
+            fragment.setChannelID(channel.getChannelID());
+        }
+    }
+
+
 }

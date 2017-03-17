@@ -1,0 +1,39 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="vincent.riva.channelmessaging.Fragments.ChannelListFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|center_horizontal">
+
+        <ImageView
+            android:layout_width="118dp"
+            android:layout_height="118dp"
+            android:id="@+id/imageView2"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/channel_logo"
+            android:tint="@color/abc_primary_text_disable_only_material_light"
+            android:transitionName="logo"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amis"
+            android:id="@+id/buttonAmis"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginBottom="20px" />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listViewChannels"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/buttonAmis" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

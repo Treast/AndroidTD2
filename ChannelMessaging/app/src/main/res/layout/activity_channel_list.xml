@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,31 +10,18 @@
     android:orientation="vertical"
     tools:context="vincent.riva.channelmessaging.ChannelListActivity">
 
-    <ImageView
-        android:layout_width="118dp"
-        android:layout_height="118dp"
-        android:id="@+id/imageView2"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/channel_logo"
-        android:tint="@color/abc_primary_text_disable_only_material_light"
-        android:transitionName="logo"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amis"
-        android:id="@+id/buttonAmis"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="20px"
-        android:layout_gravity="center_horizontal" />
-
-    <ListView
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewChannels"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/buttonAmis" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:name="vincent.riva.channelmessaging.Fragments.ChannelListFragment"
+            android:id="@+id/fragmentChannelList"
+            tools:layout="@layout/fragment_channel_list" />
+    </LinearLayout>
+</RelativeLayout>
