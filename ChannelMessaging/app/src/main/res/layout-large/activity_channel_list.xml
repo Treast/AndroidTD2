@@ -10,14 +10,14 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:name="vincent.riva.channelmessaging.Fragments.ChannelListFragment"
+        android:name="riva.vincent.channelmessaging.fragments.ChannelListFragment"
         android:id="@+id/fragmentChannelList"
         tools:layout="@layout/fragment_channel_list" />
     <fragment
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:name="vincent.riva.channelmessaging.Fragments.MessageFragment"
+        android:name="riva.vincent.channelmessaging.fragments.MessageFragment"
         android:id="@+id/fragmentMessage"
         android:layout_gravity="left"
         tools:layout="@layout/fragment_message" />

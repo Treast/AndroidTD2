@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="vincent.riva.channelmessaging.FriendsActivity">
+    tools:context=".friends.FriendsActivity">
 
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="vincent.riva.channelmessaging.FriendsActivity"
+        tools:context=".friends.FriendsActivity"
         tools:showIn="@layout/activity_friends">
 
         <ListView
