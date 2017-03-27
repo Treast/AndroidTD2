@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import riva.vincent.channelmessaging.channel.MessageArrayAdapter;
+import riva.vincent.channelmessaging.fragments.SoundRecordDialog;
 import riva.vincent.channelmessaging.listeners.OnCompleteRequestListener;
 import riva.vincent.channelmessaging.response.ResponseMessage;
 import riva.vincent.channelmessaging.response.ResponseMessageList;
@@ -46,6 +47,7 @@ public class ChannelActivity extends GPSActivity {
     private Context context;
     private final int PICTURE_REQUEST_CODE = 1001;
     private ListView listViewMessages;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +61,16 @@ public class ChannelActivity extends GPSActivity {
         final EditText editTextMessage = (EditText)findViewById(R.id.editTextMessage);
         Button buttonEnvoyer = (Button)findViewById(R.id.buttonEnvoyer);
         Button buttonPhoto = (Button)findViewById(R.id.buttonPhoto);
+        Button buttonSon = (Button)findViewById(R.id.buttonSon);
         this.listViewMessages = (ListView)findViewById(R.id.listViewMessages);
+
+        buttonSon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SoundRecordDialog soundDialog = new SoundRecordDialog();
+                soundDialog.show(getFragmentManager(), "Tag pour le son");
+            }
+        });
 
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,49 +204,46 @@ public class ChannelActivity extends GPSActivity {
 
         async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
             @Override
-            public void onCompleteRequest(String response) {
-                if (isOnline()) {
+            public void onCompleteRequest(final String response) {
+                if (response != "") {
                     Gson gson = new Gson();
                     ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
                     listViewMessages.setAdapter(new MessageArrayAdapter(getApplicationContext(), messageList.getMessages()));
                     listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final ResponseMessage message = (ResponseMessage) listViewMessages.getItemAtPosition(position);
-                            AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
-                                    .setIcon(android.R.drawable.ic_dialog_alert)//drawable de l'icone à gauche du titre
-                                    .setTitle("Que voulez-vous faire .")//Titre de l'alert dialog
-                                    .setItems(new String[]{"Ajouter en ami", "Voir sur la carte"}, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (which == 0) {
-                                                UserDataSource userDataSource = new UserDataSource(getApplicationContext());
-                                                userDataSource.open();
-                                                userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
-                                                userDataSource.close();
-                                            } else {
-                                                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-                                                intent.putExtra("lat", message.getLatitude());
-                                                intent.putExtra("lon", message.getLongitude());
-                                                intent.putExtra("user", message.getUsername());
-                                                startActivity(intent);
+                            if(response != "") {
+                                final ResponseMessage message = (ResponseMessage) listViewMessages.getItemAtPosition(position);
+                                AlertDialog dialog = new AlertDialog.Builder(ChannelActivity.this)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)//drawable de l'icone à gauche du titre
+                                        .setTitle("Que voulez-vous faire .")//Titre de l'alert dialog
+                                        .setItems(new String[]{"Ajouter en ami", "Voir sur la carte"}, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (which == 0) {
+                                                    UserDataSource userDataSource = new UserDataSource(getApplicationContext());
+                                                    userDataSource.open();
+                                                    userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
+                                                    userDataSource.close();
+                                                } else {
+                                                    Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+                                                    intent.putExtra("lat", message.getLatitude());
+                                                    intent.putExtra("lon", message.getLongitude());
+                                                    intent.putExtra("user", message.getUsername());
+                                                    startActivity(intent);
+                                                }
                                             }
-                                        }
-                                    }).create();
-                            dialog.show();
+                                        }).create();
+                                dialog.show();
+                            }
                         }
                     });
+                }else{
+                    Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        if(isOnline())
             async.execute("http://www.raphaelbischof.fr/messaging/?function=getmessages", "accesstoken", this.accesstoken, "channelid", channelID + "");
-        else
-            Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
-    }
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
 }

@@ -52,10 +52,12 @@ public class MessageArrayAdapter extends ArrayAdapter<ResponseMessage> {
             async.setOnCompleteDownloadListener(new OnDownloadListener() {
                 @Override
                 public void onCompleteDownload(String r) {
-                    File f = new File(getContext().getFilesDir(), r);
-                    Bitmap image = BitmapFactory.decodeFile(f.getAbsolutePath());
-                    Bitmap avatar = getRoundedCornerBitmap(MessageArrayAdapter.getRoundedCornerBitmap(image));
-                    imageViewAvatar.setImageBitmap(avatar);
+                    if(r != "") {
+                        File f = new File(getContext().getFilesDir(), r);
+                        Bitmap image = BitmapFactory.decodeFile(f.getAbsolutePath());
+                        Bitmap avatar = getRoundedCornerBitmap(MessageArrayAdapter.getRoundedCornerBitmap(image));
+                        imageViewAvatar.setImageBitmap(avatar);
+                    }
                 }
             });
 

@@ -91,49 +91,46 @@ public class MessageFragment extends Fragment {
 
         async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
             @Override
-            public void onCompleteRequest(String response) {
-                if (getActivity() != null && isOnline()) {
+            public void onCompleteRequest(final String response) {
+                if (getActivity() != null && response != "") {
                     Gson gson = new Gson();
                     ResponseMessageList messageList = gson.fromJson(response, ResponseMessageList.class);
                     listViewMessages.setAdapter(new MessageArrayAdapter(getActivity().getApplicationContext(), messageList.getMessages()));
                     listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final ResponseMessage message = (ResponseMessage) listViewMessages.getItemAtPosition(position);
-                            AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                                    .setIcon(android.R.drawable.ic_dialog_alert)//drawable de l'icone à gauche du titre
-                                    .setTitle("Que voulez-vous faire .")//Titre de l'alert dialog
-                                    .setItems(new String[]{"Ajouter en ami", "Voir sur la carte"}, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (which == 0) {
-                                                UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());
-                                                userDataSource.open();
-                                                userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
-                                                userDataSource.close();
-                                            } else {
-                                                Intent intent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
-                                                intent.putExtra("lat", message.getLatitude());
-                                                intent.putExtra("lon", message.getLongitude());
-                                                intent.putExtra("user", message.getUsername());
-                                                startActivity(intent);
+                            if(response != "") {
+                                final ResponseMessage message = (ResponseMessage) listViewMessages.getItemAtPosition(position);
+                                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                                        .setIcon(android.R.drawable.ic_dialog_alert)//drawable de l'icone à gauche du titre
+                                        .setTitle("Que voulez-vous faire .")//Titre de l'alert dialog
+                                        .setItems(new String[]{"Ajouter en ami", "Voir sur la carte"}, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (which == 0) {
+                                                    UserDataSource userDataSource = new UserDataSource(getActivity().getApplicationContext());
+                                                    userDataSource.open();
+                                                    userDataSource.createFriend(message.getUsername(), message.getImageUrl(), message.getUserID());
+                                                    userDataSource.close();
+                                                } else {
+                                                    Intent intent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
+                                                    intent.putExtra("lat", message.getLatitude());
+                                                    intent.putExtra("lon", message.getLongitude());
+                                                    intent.putExtra("user", message.getUsername());
+                                                    startActivity(intent);
+                                                }
                                             }
-                                        }
-                                    }).create();
-                            dialog.show();
+                                        }).create();
+                                dialog.show();
+                            }
                         }
                     });
+                } else {
+                    if(getActivity() != null)
+                        Toast.makeText(getActivity(), "No Internet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        if(isOnline())
             async.execute("http://www.raphaelbischof.fr/messaging/?function=getmessages", "accesstoken", token, "channelid", channelID + "");
-        else
-            Toast.makeText(getActivity(), "No Internet", Toast.LENGTH_SHORT).show();
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 }

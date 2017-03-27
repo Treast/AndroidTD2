@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -42,10 +43,15 @@ public class ChannelListActivity extends GPSActivity implements View.OnClickList
 
     @Override
     public void onCompleteRequest(String response) {
-        Gson gson = new Gson();
-        channelList = gson.fromJson(response, ResponseChannelList.class);
-        ChannelListFragment fragment = (ChannelListFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentChannelList);
-        fragment.setChannels(channelList.getChannels());
+        if(response != "")
+        {
+            Gson gson = new Gson();
+            channelList = gson.fromJson(response, ResponseChannelList.class);
+            ChannelListFragment fragment = (ChannelListFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentChannelList);
+            fragment.setChannels(channelList.getChannels());
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -40,5 +40,12 @@
             android:text="Photo"
             android:id="@+id/buttonPhoto"
             android:layout_weight="0.1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Photo"
+            android:id="@+id/buttonSon"
+            android:layout_weight="0.1" />
     </LinearLayout>
 </RelativeLayout>

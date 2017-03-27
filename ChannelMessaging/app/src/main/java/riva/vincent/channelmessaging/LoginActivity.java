@@ -96,34 +96,37 @@ public class LoginActivity extends Activity {
                 async.setOnCompleteRequestListener(new OnCompleteRequestListener() {
                     @Override
                     public void onCompleteRequest(String response) {
-                        Gson gson = new Gson();
-                        textViewWinter.clearAnimation();
-                        ResponseAccessToken token = gson.fromJson(response, ResponseAccessToken.class);
+                        if(response != "") {
+                            Gson gson = new Gson();
+                            textViewWinter.clearAnimation();
+                            ResponseAccessToken token = gson.fromJson(response, ResponseAccessToken.class);
 
-                        loader.setVisibility(View.INVISIBLE);
-                        buttonValider.setVisibility(View.VISIBLE);
-                        if(token.getCode() == 200)
-                        {
-                            SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putString("accesstoken", token.getAccesstoken());
-                            editor.commit();
-                            startActivity(myIntent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, imageViewLogo, "logo").toBundle());
-                        } else {
-                            Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "Connexion échouée", Snackbar.LENGTH_LONG);
-                            snackbar.setAction("Réessayer", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    editTextUsername.setText("");
-                                    editTextPassword.setText("");
-                                }
-                            });
-                            snackbar.show();
+                            loader.setVisibility(View.INVISIBLE);
+                            buttonValider.setVisibility(View.VISIBLE);
+                            if (token.getCode() == 200) {
+                                SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("accesstoken", token.getAccesstoken());
+                                editor.commit();
+                                startActivity(myIntent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, imageViewLogo, "logo").toBundle());
+                            } else {
+                                Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "Connexion échouée", Snackbar.LENGTH_LONG);
+                                snackbar.setAction("Réessayer", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        editTextUsername.setText("");
+                                        editTextPassword.setText("");
+                                    }
+                                });
+                                snackbar.show();
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_SHORT).show();
+                            loader.setVisibility(View.INVISIBLE);
+                            buttonValider.setVisibility(View.VISIBLE);
                         }
-
                     }
                 });
-                if(isOnline()) {
                     SharedPreferences settings = getSharedPreferences("MyPrefs", 0);
 
                     String firebaseToken = settings.getString("firebaseToken", "dd");
@@ -132,17 +135,7 @@ public class LoginActivity extends Activity {
                         async.execute("http://www.raphaelbischof.fr/messaging/?function=connect", "username", editTextUsername.getText().toString(), "password", editTextPassword.getText().toString(), "registrationid", firebaseToken);
                     else
                         async.execute("http://www.raphaelbischof.fr/messaging/?function=connect", "username", editTextUsername.getText().toString(), "password", editTextPassword.getText().toString());
-                } else {
-                    Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_SHORT).show();
-                    loader.setVisibility(View.INVISIBLE);
-                    buttonValider.setVisibility(View.VISIBLE);
-                }
             }
         });
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 }

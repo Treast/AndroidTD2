@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -47,10 +48,10 @@ public class SoundRecordDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Son")
-                .setMessage("Voulez-vous enregistrer un son ?")
+                .setMessage("Voulez-vous enregistrer un son ? (Pas implémenté)")
                 .setPositiveButton(R.string.enregistrer, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mFileName = getActivity().getExternalCacheDir().getAbsolutePath();
+                        /*mFileName = getActivity().getExternalCacheDir().getAbsolutePath();
                         mFileName += "/audiorecordtest.3gp";
 
                         mRecorder = new MediaRecorder();
@@ -81,7 +82,8 @@ public class SoundRecordDialog extends DialogFragment {
                                     e.printStackTrace();
                                 }
                             }
-                        }, 1000);
+                        }, 1000);*/
+                        Toast.makeText(getActivity(), "Ca ne marche pas", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(R.string.cancel, null);
